@@ -17,9 +17,10 @@ func GetOrders(c *gin.Context) {
 
 	for _, o := range orders {
 		order := models.ResponseOrder{
-			ID:        o.ID,
-			OrderCode: o.OrderCode,
-			CreatedAt: o.CreatedAt,
+			ID:          o.ID,
+			OrderCode:   o.OrderCode,
+			Description: o.Description,
+			CreatedAt:   o.CreatedAt,
 			User: models.ResponseUserSingle{
 				Username: o.User.Username,
 				Email:    o.User.Email,
@@ -40,7 +41,6 @@ func GetOrderByID(c *gin.Context) {
 	id := c.Param("id")
 	var order models.Order
 	data := config.DB.Preload(clause.Associations).First(&order, "id = ?", id)
-
 	if data.Error != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"message": "Data not found",
@@ -50,9 +50,10 @@ func GetOrderByID(c *gin.Context) {
 	}
 
 	responseOrder := models.ResponseOrder{
-		ID:        order.ID,
-		OrderCode: order.OrderCode,
-		CreatedAt: order.CreatedAt,
+		ID:          order.ID,
+		OrderCode:   order.OrderCode,
+		Description: order.Description,
+		CreatedAt:   order.CreatedAt,
 		User: models.ResponseUserSingle{
 			Username: order.User.Username,
 			Email:    order.User.Email,

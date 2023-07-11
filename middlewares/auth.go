@@ -30,3 +30,36 @@ func Auth() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func IsAdmin() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		tokenString := c.GetHeader("Authorization")
+		if tokenString == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Request need access token",
+			})
+			c.Abort()
+			return
+		}
+		// validate token
+		_, role, err := auth.ValidateToken(tokenString)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Unauthorized",
+				"error":   err.Error(),
+			})
+			c.Abort()
+			return
+		}
+		// role 1 = admin
+		if role != 1 {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Your role don't have access to this page",
+				"status":  http.StatusUnauthorized,
+			})
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
+}
